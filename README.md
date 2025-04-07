@@ -1,4 +1,4 @@
-                          --User Manu--
+--User Manu--
 
 1. how to set up
 
