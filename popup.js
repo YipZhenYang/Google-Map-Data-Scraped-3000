@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 //data format 
-                const headers = ['Name', 'Web Address', 'Phone'];
+                const headers = ['Name', 'Website URL', 'Phone Number'];
                 const headerRow = document.createElement('tr');
                 headers.forEach(headerText => {
                     const header = document.createElement('th');
@@ -44,14 +44,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     headerRow.appendChild(header);
                 });
                 resultsTable.appendChild(headerRow);
-
                 // generate a table 
+
                 if (!results || !results[0] || !results[0].result) return;
                 results[0].result.forEach(function(item) {
                     var row = document.createElement('tr');
-                    ['title', 'companyUrl', 'phone'].forEach(function(key) {
+                    ['title',  'companyUrl','phone'].forEach(function(key) {
                         var cell = document.createElement('td');
-                        cell.textContent = item[key] || '';
+                        cell.textContent = item[key] || ''; 
                         row.appendChild(cell);
                     });
                     resultsTable.appendChild(row);
@@ -85,30 +85,37 @@ function scrapeData() {
         // Get Name
         var container = link.closest('[jsaction*="mouseover:pane"]');
         var titleText = container ? container.querySelector('.fontHeadlineSmall').textContent : '';
+        var rating = '';
+        var reviewCount = '';
         var phone = '';
+        var industry = '';
+        var address = '';
         var companyUrl = '';
 
         // Get Phone Numbers
         if (container) {
-            var containerText = container.textContent || '';
-            var phoneRegex = /(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/;
-            var phoneMatch = containerText.match(phoneRegex);
+            const containerText = container.textContent || '';
+        
+            //Phone Number
+            const phoneRegex = /(\+\d{1,3}[-\s]?)?(\(?\d{2,4}\)?[-\s]?)?\d{3,4}[-\s]?\d{4}/;
+            const phoneMatch = containerText.match(phoneRegex);
             phone = phoneMatch ? phoneMatch[0] : '';
-        }
-
-        // Get Company URL
-        if (container) {
-            var allLinks = Array.from(container.querySelectorAll('a[href]'));
-            var filteredLinks = allLinks.filter(a => !a.href.startsWith("https://www.google.com/maps/place/"));
+        
+            // URL
+            const allLinks = Array.from(container.querySelectorAll('a[href]'));
+            const filteredLinks = allLinks.filter(a => !a.href.startsWith("https://www.google.com/maps/place/"));
             if (filteredLinks.length > 0) {
                 companyUrl = filteredLinks[0].href;
             }
+        
         }
 
         return {
             title: titleText,
             companyUrl: companyUrl,
             phone: phone,
+            industry: industry,
+            address: address,
         };
     });
 }
